@@ -1,13 +1,13 @@
-import user from "./user";
-import experience from "./experience";
-import skill from "./skill";
-import education from "./education";
-import root from "./root";
+import root from "./root.js";
+import user from "./user.js";
+import experience from "./experience.js";
+import education from "./education.js";
+import skill from "./skill.js";
 
 export default {
   root,
   user,
   experience,
-  skill,
   education,
+  skill
 };
