@@ -1,7 +1,6 @@
 import "dotenv/config";
 import cors from "cors";
 import express from "express";
-
 import models, { sequelize } from "./models/index.js";
 import routes from "./routes/index.js";
 import errorMiddleware from "./middleware/errorMiddleware.js";
@@ -9,24 +8,20 @@ import errorMiddleware from "./middleware/errorMiddleware.js";
 const app = express();
 app.set("trust proxy", true);
 
-// Configurações de CORS
-const corsOptions = {
-  origin: ["http://example.com", "*"],
-  optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
+// --- Configuração de CORS ---
+app.use(cors({ origin: "*", optionsSuccessStatus: 200 }));
 
-// Log simples de requisições
+// --- Log simples ---
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} - ${req.ip}`);
   next();
 });
 
-// Body parser
+// --- Body parser ---
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Injeta models e usuário padrão no contexto da requisição
+// --- Injeta models e usuário padrão ---
 app.use(async (req, res, next) => {
   req.context = { models };
   try {
@@ -37,21 +32,29 @@ app.use(async (req, res, next) => {
   next();
 });
 
-// Rotas principais
+// --- Rotas principais ---
 app.use("/", routes.root);
 app.use("/users", routes.user);
 app.use("/experiences", routes.experience);
 app.use("/educations", routes.education);
 app.use("/skills", routes.skill);
 
-// Middleware global de erro (sempre por último)
+// --- Rota default (para evitar 404 no '/') ---
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "🚀 API do currículo está rodando com sucesso!",
+    endpoints: ["/users", "/experiences", "/educations", "/skills"],
+  });
+});
+
+// --- Middleware global de erro ---
 app.use(errorMiddleware);
 
-// Porta
-const port = process.env.PORT ?? 3000;
+// --- Porta ---
+const port = process.env.PORT || 3000;
 const eraseDatabaseOnSync = process.env.ERASE_DATABASE === "true";
 
-// Função para popular o banco com dados iniciais
+// --- Função para popular o banco ---
 const createUserWithRelations = async () => {
   try {
     await models.User.create(
@@ -85,19 +88,20 @@ const createUserWithRelations = async () => {
         include: [models.Experience, models.Education, models.Skill],
       }
     );
-
     console.log("✅ Banco populado com usuário de exemplo!");
   } catch (error) {
     console.error("Erro ao popular banco:", error);
   }
 };
 
-// Conexão com o banco e inicialização do servidor
-sequelize
-  .authenticate()
-  .then(() => console.log("✅ Conexão com o banco estabelecida com sucesso!"))
-  .then(() => sequelize.sync({ force: eraseDatabaseOnSync }))
-  .then(async () => {
+// --- Inicialização ---
+const startServer = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("✅ Conexão com o banco estabelecida com sucesso!");
+
+    await sequelize.sync({ force: eraseDatabaseOnSync });
+
     if (eraseDatabaseOnSync) {
       await createUserWithRelations();
     }
@@ -105,7 +109,15 @@ sequelize
     app.listen(port, () => {
       console.log(`🚀 Servidor rodando na porta ${port}`);
     });
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error("❌ Erro ao iniciar o servidor:", error);
-  });
+  }
+};
+
+// --- Executa apenas se não estiver em ambiente serverless ---
+if (process.env.NODE_ENV !== "production") {
+  startServer();
+}
+
+// --- Exporta para Vercel ---
+export default app;
