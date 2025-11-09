@@ -1,14 +1,15 @@
 {
   "name": "curriculo-express",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "API Express + PostgreSQL para Currículo Online",
+  "main": "api/index.js",
   "scripts": {
-  "dev": "nodemon --exec babel-node api/index.js"
-},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+    "start": "node api/index.js",
+    "dev": "nodemon --exec babel-node api/index.js"
+  },
+  "keywords": ["express", "postgresql", "sequelize"],
+  "author": "Maria Eduarda",
+  "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",

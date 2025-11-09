@@ -1,14 +1,13 @@
-import { Router } from "express";
-import user from "./user.js";
-import education from "./education.js";
-import experience from "./experience.js";
-import skill from "./skill.js";
+import user from "./user";
+import experience from "./experience";
+import skill from "./skill";
+import education from "./education";
+import root from "./root";
 
-const router = Router();
-
-router.use("/users", user);
-router.use("/education", education);
-router.use("/experience", experience);
-router.use("/skills", skill);
-
-export default router;
+export default {
+  root,
+  user,
+  experience,
+  skill,
+  education,
+};
