@@ -1,14 +1,14 @@
-import { Router } from 'express';
-import userRoutes from './userRoutes.js';
-import experienceRoutes from './experienceRoutes.js';
-import educationRoutes from './educationRoutes.js';
-import skillRoutes from './skillRoutes.js';
+import { Router } from "express";
+import user from "./user.js";
+import education from "./education.js";
+import experience from "./experience.js";
+import skill from "./skill.js";
 
 const router = Router();
 
-router.use('/users', userRoutes);
-router.use('/experiences', experienceRoutes);
-router.use('/education', educationRoutes);
-router.use('/skills', skillRoutes);
+router.use("/users", user);
+router.use("/education", education);
+router.use("/experience", experience);
+router.use("/skills", skill);
 
 export default router;
