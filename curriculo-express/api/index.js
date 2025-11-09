@@ -3,6 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import models, { sequelize } from './models/index.js';
 import routes from './routes/index.js';
+import { isAuthenticated } from "./middleware/authMiddleware.js";
+import errorMiddleware from "./middleware/errorMiddleware.js";
 
 const app = express();
 
