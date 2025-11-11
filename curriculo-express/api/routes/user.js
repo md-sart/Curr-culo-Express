@@ -28,11 +28,11 @@ router.get("/:id", async (req, res) => {
 // POST new user
 router.post("/", async (req, res) => {
   try {
+    console.log("📩 Body recebido:", req.body); // <-- ajuda no debug
     const { nome, email, resumo } = req.body;
 
-    // Validação simples
     if (!nome || !email) {
-      return res.status(400).json({ error: "Campos obrigatórios: nome e email" });
+      return res.status(400).json({ error: "Campos 'nome' e 'email' são obrigatórios" });
     }
 
     const newUser = await req.context.models.User.create({ nome, email, resumo });
@@ -46,14 +46,10 @@ router.post("/", async (req, res) => {
 // PUT update user
 router.put("/:id", async (req, res) => {
   try {
-    const { nome, email, resumo } = req.body;
     const user = await req.context.models.User.findByPk(req.params.id);
+    if (!user) return res.status(404).json({ error: "Usuário não encontrado" });
 
-    if (!user) {
-      return res.status(404).json({ error: "Usuário não encontrado" });
-    }
-
-    await user.update({ nome, email, resumo });
+    await user.update(req.body);
     return res.status(200).json(user);
   } catch (error) {
     console.error("Erro ao atualizar usuário:", error);
@@ -65,11 +61,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const result = await req.context.models.User.destroy({ where: { id: req.params.id } });
-
-    if (!result) {
-      return res.status(404).json({ error: "Usuário não encontrado" });
-    }
-
+    if (!result) return res.status(404).json({ error: "Usuário não encontrado" });
     return res.status(204).send();
   } catch (error) {
     console.error("Erro ao deletar usuário:", error);
