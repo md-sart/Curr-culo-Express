@@ -28,18 +28,36 @@ router.get("/:id", async (req, res) => {
 // POST new user
 router.post("/", async (req, res) => {
   try {
-    console.log("📩 Body recebido:", req.body); // <-- ajuda no debug
+    console.log("📩 Body recebido:", req.body);
+    console.log("📦 Headers:", req.headers);
+    console.log("🔍 Content-Type:", req.headers['content-type']);
+    
     const { nome, email, resumo } = req.body;
 
+    // Debug dos valores
+    console.log("🔍 Valores extraídos:", { nome, email, resumo });
+
     if (!nome || !email) {
-      return res.status(400).json({ error: "Campos 'nome' e 'email' são obrigatórios" });
+      return res.status(400).json({ 
+        error: "Campos 'nome' e 'email' são obrigatórios",
+        received: { nome, email, resumo }
+      });
     }
 
-    const newUser = await req.context.models.User.create({ nome, email, resumo });
+    const newUser = await req.context.models.User.create({ 
+      nome, 
+      email, 
+      resumo 
+    });
+    
     return res.status(201).json(newUser);
   } catch (error) {
-    console.error("Erro ao criar usuário:", error);
-    return res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("❌ Erro detalhado ao criar usuário:", error);
+    console.error("🔍 Stack trace:", error.stack);
+    return res.status(500).json({ 
+      error: "Erro interno do servidor",
+      details: error.message 
+    });
   }
 });
 

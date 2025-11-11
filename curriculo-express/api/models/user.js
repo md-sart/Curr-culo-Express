@@ -1,8 +1,9 @@
 const getUserModel = (sequelize, { DataTypes }) => {
   const User = sequelize.define("User", {
     nome: {
-      type: DataTypes.STRING,
-      allowNull: true,
+       type: DataTypes.STRING,
+      allowNull: true, 
+      defaultValue: null, 
     },
     email: {
       type: DataTypes.STRING,
@@ -15,6 +16,7 @@ const getUserModel = (sequelize, { DataTypes }) => {
     resumo: {
       type: DataTypes.TEXT,
       allowNull: true,
+      defaultValue: null, 
     },
   });
 
