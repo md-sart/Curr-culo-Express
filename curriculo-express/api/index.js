@@ -106,17 +106,18 @@ const startServer = async () => {
       await createUserWithRelations();
     }
 
-    app.listen(port, () => {
-      console.log(`🚀 Servidor rodando na porta ${port}`);
-    });
+    console.log("🚀 Servidor inicializado localmente!");
   } catch (error) {
     console.error("❌ Erro ao iniciar o servidor:", error);
   }
 };
 
-// --- Executa apenas se não estiver em ambiente serverless ---
+// --- Executa apenas se estiver rodando localmente ---
 if (process.env.NODE_ENV !== "production") {
   startServer();
+  app.listen(port, () => {
+    console.log(`Servidor local rodando na porta ${port}`);
+  });
 }
 
 // --- Exporta para Vercel ---
