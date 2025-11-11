@@ -2,7 +2,7 @@ const getUserModel = (sequelize, { DataTypes }) => {
   const User = sequelize.define("User", {
     nome: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     email: {
       type: DataTypes.STRING,
